@@ -7,17 +7,39 @@ import asyncio
 import socket
 from multiprocessing import Process, Queue
 import threading
-from flask import Flask, render_template, Response, jsonify
+from flask import Flask, render_template, Response, jsonify, request
 from azure.iot.device.aio import IoTHubModuleClient
+import pyodbc
 
 app = Flask(__name__)
 
 def flask_run(frame_queue):
     app.run(host='0.0.0.0', port="5000")
 
-@app.route('/')
-def index():
-    return render_template('index.html',)
+# @app.route('/')
+# def index():
+#     return render_template('index.html',)
+
+connection_string = 'Driver={ODBC Driver 18 for SQL Server};Server=tcp:iotedgecustomvisionserver.database.windows.net,1433;Database=iotedgecustomvisiondatabase;Uid=iotedgecustomvisionadmin;Pwd=P@ssw0rd;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
+
+# Create a function to execute SQL queries
+def execute_query(query):
+    with pyodbc.connect(connection_string) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+    return results
+
+@app.route('/', methods=['GET', 'POST'])
+def index(): 
+    if request.method == 'POST':
+        keyword = request.form['keyword']
+        query = f"SELECT IR.NIM, SD.Name, SD.ProgramStudy, IR.EventProcessedUtcTime, IR.Status FROM InspectionResults IR JOIN StudentData SD ON IR.NIM = SD.NIM WHERE IR.NIM LIKE '%{keyword}%'"
+        results = execute_query(query)
+        return render_template('results.html', results=results)
+    query = f"SELECT IR.NIM, SD.Name, SD.ProgramStudy, IR.EventProcessedUtcTime, IR.Status FROM InspectionResults IR JOIN StudentData SD ON IR.NIM = SD.NIM ORDER BY IR.EventProcessedUtcTime DESC"
+    results = execute_query(query)
+    return render_template('index.html', results=results)
 
 def gen():
     while True:

@@ -2,8 +2,62 @@
 <html lang="en">
   <head>
     <title>Video Stream</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </head>
-  <body>
-  <img src="{{ url_for('video_feed') }}" />
+  <body class="bg-dark">
+     <!-- page-header -->
+    <div class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="pt-4 pb-4">
+                        <h1 class="page-title">Student Log Entry</h1>
+                    </div>
+                </div>
+                <div class="col-2"></div>
+                  <div class="col-8 pb-5">
+                    <form method="POST" action="/" class="d-flex">
+                      <input type="search" name="keyword" placeholder="Search using NIM as keyword..." class="form-control">
+                      <button type="submit">Search</button>      
+                    </form>
+                  </div>
+                  <div class="col-2"></div>
+            </div>
+        </div>
+    </div>
+    <!-- /.page-header-->
+    <div class="card-section">
+      <div class="container text-center">
+        <img class="w-100 h-auto img-thumbnail" src="{{ url_for('video_feed') }}"  />
+      </div>
+    </div>
+    
+    <div class="container">
+      <table class="table table-striped table-dark table-hover mx-auto">
+        <thead>
+            <tr>
+                <th>NIM</th>
+                <th>Name</th>
+                <th>ProgramStudy</th>
+                <th>Time</th>
+                <th>Status</th>
+                <!-- Add more column headers as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in results %}
+                <tr>
+                  <td>{{ row[0] }}</td>
+                  <td>{{ row[1] }}</td>
+                  <td>{{ row[2] }}</td>
+                  <td>{{ row[3] }}</td>
+                  <td>{{ row[4] }}</td>
+                    <!-- Display more columns as needed -->
+                </tr>
+            {% endfor %}
+        </tbody>
+     </table>
+    </div>
   </body>
 </html>
