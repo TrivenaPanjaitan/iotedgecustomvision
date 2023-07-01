@@ -17,7 +17,7 @@
                 </div>
                 <div class="col-2"></div>
                   <div class="col-8 pb-5">
-                    <form method="POST" action="/" class="d-flex">
+                    <form method="POST" action="/search" class="d-flex">
                       <input type="search" name="keyword" placeholder="Search using NIM as keyword..." class="form-control">
                       <button type="submit">Search</button>      
                     </form>
@@ -42,22 +42,40 @@
                 <th>ProgramStudy</th>
                 <th>Time</th>
                 <th>Status</th>
-                <!-- Add more column headers as needed -->
             </tr>
         </thead>
-        <tbody>
-            {% for row in results %}
-                <tr>
-                  <td>{{ row[0] }}</td>
-                  <td>{{ row[1] }}</td>
-                  <td>{{ row[2] }}</td>
-                  <td>{{ row[3] }}</td>
-                  <td>{{ row[4] }}</td>
-                    <!-- Display more columns as needed -->
-                </tr>
-            {% endfor %}
+        <tbody id="data_table">
+        <!-- Data rows will be inserted here dynamically -->
         </tbody>
      </table>
     </div>
+    <script>
+      function fetchData() {
+        fetch('/data_feed')
+          .then(response => response.json())
+          .then(data => {
+            const tableBody = document.getElementById('data_table');
+            tableBody.innerHTML = '';
+
+            data.forEach(row => {
+              const newRow = document.createElement('tr');
+              newRow.innerHTML = `
+                <td>${row.NIM}</td>
+                <td>${row.Name}</td>
+                <td>${row.ProgramStudy}</td>
+                <td>${row.EventProcessedUtcTime}</td>
+                <td>${row.Status}</td>
+              `;
+              tableBody.appendChild(newRow);
+            });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      }
+
+      // Fetch data every 5 seconds
+      setInterval(fetchData, 5000);
+    </script>
   </body>
 </html>
