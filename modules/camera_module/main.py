@@ -50,7 +50,7 @@ def video_feed():
 def data_feed():
     # Fetch data from Azure SQL Database
     cursor = conn.cursor()
-    cursor.execute("SELECT IR.NIM, SD.Name, SD.ProgramStudy, IR.EventProcessedUtcTime, IR.Status FROM InspectionResults IR JOIN StudentData SD ON IR.NIM = SD.NIM ORDER BY IR.EventProcessedUtcTime DESC")  # Replace 'YourTable' with your actual table name
+    cursor.execute("SELECT IR.NIM, SD.Name, SD.ProgramStudy, IR.EventProcessedUtcTime, IR.Status FROM InspectionResults IR JOIN StudentData SD ON IR.NIM = SD.NIM ORDER BY IR.EventProcessedUtcTime DESC LIMIT 20")
     data = cursor.fetchall()
 
     # Convert data to a list of dictionaries
