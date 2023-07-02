@@ -5,6 +5,7 @@ import asyncio
 import cv2
 import flask
 import json
+import logging
 import pyodbc
 import requests
 import socket
@@ -100,9 +101,10 @@ async def camera(frame_queue):
                     cv2.rectangle(frame,(x1,y1),(x2,y2),(255,0,0),2)
                     text=box["tagName"]+' '+str(round(box["probability"],2))
                     cv2.putText(frame,text,(x2,y2),cv2.FONT_HERSHEY_SIMPLEX,0.7,(0,0,255),2)
-                    
-                    json_output[box["NIM"]]=box["tagName"]
-                    json_output[box["Probability"]]=box["probability"]
+
+
+                    json_output["NIM"]=box["tagName"]
+                    json_output["Probability"]=box["probability"]
             
             ret, encodedFrame2=cv2.imencode(".jpg",frame)
             frame_byte=encodedFrame2.tobytes()
@@ -118,7 +120,8 @@ async def camera(frame_queue):
             
             json_output={}
 
-        except:
+        except Exception as error:
+            logging.error("Error from camera code: %s", str(error))
             await module_client.send_message_to_output('something wrong from camera code', "output")
             time.sleep(2)
 
