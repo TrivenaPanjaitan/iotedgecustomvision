@@ -1,12 +1,7 @@
 FROM amd64/python:3.7-slim-buster
 
 RUN apt update && \
-    apt install -y python3-opencv
-
-# Install the necessary dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg
+    apt install -y python3-opencv curl gnupg
 
 # Import the Microsoft repository GPG key
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
@@ -15,10 +10,7 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
 
 # Install the ODBC driver and related tools
-RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
-    msodbcsql18 \
-    mssql-tools \
-    unixodbc-dev
+RUN apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools unixodbc-dev
 
 # Clean up the package lists and temporary files
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
