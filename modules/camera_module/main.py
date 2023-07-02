@@ -68,8 +68,8 @@ async def camera(frame_queue):
                     text=box["tagName"]+' '+str(round(box["probability"],2))
                     cv2.putText(frame,text,(x2,y2),cv2.FONT_HERSHEY_SIMPLEX,0.7,(0,0,255),2)
                     
-                    json_output[box["NIM"]]=box["tagName"]
-                    json_output[box["Probability"]]=box["probability"]
+                    json_output["NIM"]=box["tagName"]
+                    json_output["Probability"]=box["probability"]
             
             ret, encodedFrame2=cv2.imencode(".jpg",frame)
             frame_byte=encodedFrame2.tobytes()
