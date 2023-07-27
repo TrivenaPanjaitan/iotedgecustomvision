@@ -2,8 +2,80 @@
 <html lang="en">
   <head>
     <title>Video Stream</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </head>
-  <body>
-  <img src="{{ url_for('video_feed') }}" />
+  <body class="bg-dark">
+     <!-- page-header -->
+    <div class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="pt-4 pb-4">
+                        <h1 class="page-title">Student Log Entry</h1>
+                    </div>
+                </div>
+                <div class="col-2"></div>
+                  <div class="col-8 pb-5">
+                    <form method="POST" action="/search" class="d-flex">
+                      <input type="search" name="keyword" placeholder="Search using NIM as keyword..." class="form-control">
+                      <button type="submit">Search</button>      
+                    </form>
+                  </div>
+                  <div class="col-2"></div>
+            </div>
+        </div>
+    </div>
+    <!-- /.page-header-->
+    <div class="card-section">
+      <div class="container text-center">
+        <img class="w-100 h-auto img-thumbnail" src="{{ url_for('video_feed') }}"  />
+      </div>
+    </div>
+    
+    <div class="container">
+      <table class="table table-striped table-dark table-hover mx-auto">
+        <thead>
+            <tr>
+                <th>NIM</th>
+                <th>Name</th>
+                <th>ProgramStudy</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="data_table">
+        <!-- Data rows will be inserted here dynamically -->
+        </tbody>
+     </table>
+    </div>
+    <script>
+      function fetchData() {
+        fetch('/data_feed')
+          .then(response => response.json())
+          .then(data => {
+            const tableBody = document.getElementById('data_table');
+            tableBody.innerHTML = '';
+
+            data.forEach(row => {
+              const newRow = document.createElement('tr');
+              newRow.innerHTML = `
+                <td>${row.NIM}</td>
+                <td>${row.Name}</td>
+                <td>${row.ProgramStudy}</td>
+                <td>${row.EventProcessedUtcTime}</td>
+                <td>${row.Status}</td>
+              `;
+              tableBody.appendChild(newRow);
+            });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      }
+
+      // Fetch data every 5 seconds
+      setInterval(fetchData, 5000);
+    </script>
   </body>
 </html>
